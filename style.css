@@ -1,294 +1,240 @@
-/* ===================== RESET & BASE ===================== */
-* { box-sizing: border-box; margin: 0; padding: 0; }
+/* ── RESET ─────────────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#000;font-family:'Courier New',monospace;color:#fff;overflow:hidden;height:100vh;width:100vw}
 
-body {
-  background: #000;
-  font-family: 'Courier New', monospace;
-  color: #fff;
-  overflow: hidden;
-  height: 100vh;
-  width: 100vw;
-}
+/* ── SCREENS ────────────────────────────────────────── */
+.screen{position:fixed;inset:0;display:none;justify-content:center;align-items:center;flex-direction:column}
+.screen.active{display:flex}
 
-/* ===================== SCREENS ===================== */
-.screen {
-  position: fixed;
-  inset: 0;
-  display: none;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
-.screen.active { display: flex; }
-
-/* ===================== STARS BACKGROUND ===================== */
-.stars-bg {
-  position: absolute;
-  inset: 0;
+/* ── STARFIELD ──────────────────────────────────────── */
+.stars-bg{
+  position:absolute;inset:0;
   background:
-    radial-gradient(1px 1px at 10% 15%, #fff 0%, transparent 100%),
-    radial-gradient(1px 1px at 30% 45%, #aaf 0%, transparent 100%),
-    radial-gradient(1px 1px at 55% 20%, #fff 0%, transparent 100%),
-    radial-gradient(1px 1px at 75% 60%, #ffa 0%, transparent 100%),
-    radial-gradient(1px 1px at 90% 35%, #fff 0%, transparent 100%),
-    radial-gradient(1px 1px at 20% 80%, #aff 0%, transparent 100%),
-    radial-gradient(1px 1px at 65% 85%, #fff 0%, transparent 100%),
-    radial-gradient(1px 1px at 42% 70%, #faa 0%, transparent 100%),
-    radial-gradient(2px 2px at 85% 10%, #fff 0%, transparent 100%),
-    radial-gradient(1px 1px at 5%  55%, #ccc 0%, transparent 100%);
-  background-size: 800px 600px;
-  animation: starFloat 60s linear infinite;
+    radial-gradient(1px 1px at 8%  12%,#fff 0%,transparent 100%),
+    radial-gradient(1px 1px at 25% 42%,#aaf 0%,transparent 100%),
+    radial-gradient(1px 1px at 52% 18%,#fff 0%,transparent 100%),
+    radial-gradient(1px 1px at 71% 58%,#ffa 0%,transparent 100%),
+    radial-gradient(1px 1px at 88% 33%,#fff 0%,transparent 100%),
+    radial-gradient(1px 1px at 18% 77%,#aff 0%,transparent 100%),
+    radial-gradient(1px 1px at 63% 83%,#fff 0%,transparent 100%),
+    radial-gradient(1px 1px at 40% 68%,#faa 0%,transparent 100%),
+    radial-gradient(2px 2px at 83%  8%,#fff 0%,transparent 100%),
+    radial-gradient(1px 1px at  4% 53%,#ccc 0%,transparent 100%),
+    radial-gradient(1px 1px at 95% 70%,#aaf 0%,transparent 100%),
+    radial-gradient(1px 1px at 35% 90%,#fff 0%,transparent 100%);
+  background-size:900px 700px;
+  animation:starFloat 80s linear infinite;
 }
-@keyframes starFloat { to { background-position: -800px 0; } }
+@keyframes starFloat{to{background-position:-900px 0}}
 
-/* ===================== INTRO ===================== */
-.intro-content {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 18px;
-  padding: 20px;
-  max-width: 700px;
-  width: 100%;
+/* ── SCANLINES (wake-up screen) ─────────────────────── */
+.scanlines{
+  position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.25) 2px,rgba(0,0,0,0.25) 4px);
+  animation:scanMove 8s linear infinite;z-index:1;
+}
+@keyframes scanMove{to{background-position:0 100px}}
+
+/* ══════════════════════════════════════════════════════
+   ACT 0: WAKE UP
+══════════════════════════════════════════════════════ */
+.wakeup-content{
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;align-items:center;gap:24px;
+  padding:30px;width:100%;max-width:680px;
 }
 
-/* Sun animation */
-.sun-warning {
-  position: relative;
-  width: 120px;
-  height: 120px;
-  margin-bottom: 10px;
+/* Medical pod */
+.pod-anim{
+  width:140px;height:200px;border-radius:70px 70px 20px 20px;
+  background:linear-gradient(180deg,#112244,#0a1a33);
+  border:2px solid #0066aa;
+  box-shadow:0 0 30px rgba(0,150,255,0.3);
+  display:flex;flex-direction:column;overflow:hidden;
+  position:relative;animation:podOpen 2s ease-out forwards;
 }
-.sun-glow {
-  position: absolute;
-  inset: -20px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,160,0,0.3) 0%, transparent 70%);
-  animation: pulse 2s ease-in-out infinite;
+@keyframes podOpen{
+  0%  {clip-path:inset(0 0 100% 0);opacity:0}
+  30% {clip-path:inset(0 0 100% 0);opacity:1}
+  100%{clip-path:inset(0 0 0% 0);opacity:1}
 }
-.sun-core {
-  position: absolute;
-  inset: 20px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #ffe066, #ff8c00 60%, #cc4400);
-  box-shadow: 0 0 40px 15px rgba(255,150,0,0.5);
-  animation: pulse 2s ease-in-out infinite alternate;
+.pod-lid{
+  height:40%;background:linear-gradient(180deg,#0055aa,#002255);
+  border-bottom:2px solid #00aaff;
+  position:relative;
 }
-.astrophage-swarm {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  border: 3px solid transparent;
-  background: transparent;
-  animation: swarmSpin 4s linear infinite;
+.pod-lid::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent 20%,rgba(0,200,255,0.15) 50%,transparent 80%);
+  animation:podScan 3s ease-in-out infinite;
 }
-.astrophage-swarm::before {
-  content: '';
-  position: absolute;
-  inset: -6px;
-  border-radius: 50%;
-  border: 4px dashed rgba(120,60,200,0.7);
-  animation: swarmSpin 3s linear infinite reverse;
+@keyframes podScan{0%,100%{opacity:0}50%{opacity:1}}
+.pod-inner{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(180deg,#001122,#000a18);
 }
-.astrophage-swarm::after {
-  content: '👾';
-  position: absolute;
-  font-size: 22px;
-  top: -16px;
-  left: 50%;
-  transform: translateX(-50%);
-  animation: swarmOrbit 4s linear infinite;
+.pod-human{font-size:3rem;animation:humanBreathe 4s ease-in-out infinite}
+@keyframes humanBreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+
+/* Terminal box */
+.terminal-box{
+  background:rgba(0,10,25,0.92);
+  border:1px solid #00aaff;border-radius:8px;
+  width:100%;overflow:hidden;
+  box-shadow:0 0 20px rgba(0,150,255,0.2);
 }
-@keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.08);} }
-@keyframes swarmSpin { to { transform: rotate(360deg); } }
-@keyframes swarmOrbit { to { transform: translateX(-50%) rotate(360deg); } }
+.terminal-box.wide{max-width:600px;width:100%}
+.terminal-header{
+  background:#001833;padding:8px 14px;
+  display:flex;align-items:center;gap:6px;
+  border-bottom:1px solid #003366;
+}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.dot.red{background:#ff5555}.dot.yellow{background:#ffbb00}.dot.green{background:#44ff44}
+.terminal-title{margin-left:auto;font-size:0.7rem;letter-spacing:3px;color:#4488aa}
+.terminal-body{padding:18px 20px;min-height:100px}
+.terminal-text{
+  font-size:0.92rem;line-height:1.8;color:#88ddff;
+  white-space:pre-wrap;
+}
+.cursor-blink{animation:blink .8s step-end infinite;color:#00ffcc;font-size:1rem}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ══════════════════════════════════════════════════════
+   ACT 1: INTRO / BRIEFING
+══════════════════════════════════════════════════════ */
+.intro-content{
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;align-items:center;gap:18px;
+  padding:20px;max-width:700px;width:100%;
+}
+
+/* Sun + Astrophage */
+.sun-warning{position:relative;width:120px;height:120px;margin-bottom:8px}
+.sun-glow{position:absolute;inset:-20px;border-radius:50%;background:radial-gradient(circle,rgba(255,160,0,0.3) 0%,transparent 70%);animation:pulse 2s ease-in-out infinite}
+.sun-core{position:absolute;inset:20px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ffe066,#ff8c00 60%,#cc4400);box-shadow:0 0 40px 15px rgba(255,150,0,0.5);animation:pulse 2s ease-in-out infinite alternate}
+.astrophage-swarm{position:absolute;inset:0;border-radius:50%;animation:swarmSpin 4s linear infinite}
+.astrophage-swarm::before{content:'';position:absolute;inset:-6px;border-radius:50%;border:4px dashed rgba(120,60,200,0.7);animation:swarmSpin 3s linear infinite reverse}
+.astrophage-swarm::after{content:'\U0001f47e';position:absolute;font-size:22px;top:-16px;left:50%;transform:translateX(-50%);animation:swarmOrbit 4s linear infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+@keyframes swarmSpin{to{transform:rotate(360deg)}}
+@keyframes swarmOrbit{to{transform:translateX(-50%) rotate(360deg)}}
 
 /* Titles */
-.title-glow {
-  font-size: clamp(1.8rem, 5vw, 3rem);
-  font-weight: 900;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  text-shadow:
-    0 0 10px #00cfff,
-    0 0 30px #0088ff,
-    0 0 60px #0044cc;
-  animation: titlePulse 3s ease-in-out infinite;
-}
-.title-glow.green { text-shadow: 0 0 20px #00ff88, 0 0 50px #00cc44; }
-.title-glow.red   { text-shadow: 0 0 20px #ff4444, 0 0 50px #cc0000; }
-@keyframes titlePulse { 0%,100%{opacity:1;} 50%{opacity:0.85;} }
+.title-glow{font-size:clamp(1.6rem,5vw,2.8rem);font-weight:900;letter-spacing:4px;text-transform:uppercase;text-shadow:0 0 10px #00cfff,0 0 30px #0088ff,0 0 60px #0044cc;animation:titlePulse 3s ease-in-out infinite}
+.title-glow.green{text-shadow:0 0 20px #00ff88,0 0 50px #00cc44}
+.title-glow.red{text-shadow:0 0 20px #ff4444,0 0 50px #cc0000}
+@keyframes titlePulse{0%,100%{opacity:1}50%{opacity:0.85}}
+.subtitle{font-size:1rem;letter-spacing:8px;color:#88ccff;text-transform:uppercase}
 
-.subtitle {
-  font-size: 1.1rem;
-  letter-spacing: 8px;
-  color: #88ccff;
-  text-transform: uppercase;
+.story-box{
+  background:rgba(0,20,60,0.85);border:1px solid rgba(0,180,255,0.3);border-radius:12px;
+  padding:20px 28px;max-width:620px;min-height:80px;
+  line-height:1.8;font-size:0.95rem;color:#cce8ff;
+  box-shadow:0 0 20px rgba(0,150,255,0.1);
 }
 
-/* Story box */
-.story-box {
-  background: rgba(0,20,60,0.8);
-  border: 1px solid rgba(0,180,255,0.3);
-  border-radius: 12px;
-  padding: 20px 28px;
-  max-width: 620px;
-  min-height: 90px;
-  line-height: 1.7;
-  font-size: 1rem;
-  color: #cce8ff;
-  box-shadow: 0 0 20px rgba(0,150,255,0.15);
+/* Button */
+.btn-primary{
+  background:linear-gradient(135deg,#0066cc,#004499);
+  border:2px solid #00aaff;border-radius:30px;color:#fff;
+  font-size:1rem;font-family:'Courier New',monospace;
+  padding:13px 36px;cursor:pointer;letter-spacing:2px;
+  transition:all .25s;text-shadow:0 0 8px #88ccff;
+  box-shadow:0 0 20px rgba(0,150,255,0.3);
+}
+.btn-primary:hover{background:linear-gradient(135deg,#0088ff,#0055cc);box-shadow:0 0 35px rgba(0,180,255,0.5);transform:translateY(-2px) scale(1.03)}
+
+/* ══════════════════════════════════════════════════════
+   ACT 2: GAMEPLAY
+══════════════════════════════════════════════════════ */
+#game-screen{background:#000}
+#gameCanvas{position:absolute;inset:0;width:100%;height:100%}
+
+/* HUD */
+#hud{
+  position:absolute;top:0;left:0;right:0;padding:10px 18px;
+  display:flex;justify-content:space-between;align-items:flex-start;
+  background:linear-gradient(to bottom,rgba(0,5,20,0.88) 0%,transparent 100%);
+  pointer-events:none;z-index:10;
+}
+.hud-left,.hud-right{display:flex;flex-direction:column;gap:6px;min-width:210px}
+.hud-right{align-items:flex-end}
+.hud-item{display:flex;align-items:center;gap:8px}
+.hud-item.right{flex-direction:row-reverse}
+.hud-label{font-size:0.72rem;color:#88aacc;letter-spacing:1px;white-space:nowrap}
+.hud-val{font-size:0.88rem;color:#00ffcc;font-weight:bold}
+.bar-bg{width:110px;height:9px;background:rgba(255,255,255,0.1);border-radius:5px;overflow:hidden;border:1px solid rgba(255,255,255,0.12)}
+.bar{height:100%;border-radius:5px;transition:width .3s,background .5s}
+.bar.health{background:linear-gradient(90deg,#22cc55,#88ff44);width:100%}
+.bar.dist{background:linear-gradient(90deg,#0088ff,#00ccff);width:0%}
+.bar.sun{background:linear-gradient(90deg,#ffcc00,#ff6600);width:100%}
+.hud-center{text-align:center;font-size:0.8rem;letter-spacing:2px;color:#aaddff;padding-top:4px}
+
+/* In-flight story popup */
+.story-popup{
+  position:absolute;bottom:60px;left:50%;transform:translateX(-50%);
+  background:rgba(0,15,40,0.92);border:1px solid rgba(0,180,255,0.4);
+  border-radius:10px;padding:14px 24px;max-width:500px;
+  font-size:0.88rem;color:#aadeee;line-height:1.7;text-align:center;
+  box-shadow:0 0 25px rgba(0,150,255,0.2);
+  transition:opacity .5s;z-index:20;
+}
+.story-popup.hidden{opacity:0;pointer-events:none}
+
+#controls-tip{
+  position:absolute;bottom:14px;left:50%;transform:translateX(-50%);
+  color:rgba(150,200,255,0.5);font-size:0.7rem;letter-spacing:2px;
+  pointer-events:none;z-index:10;
 }
 
-/* Buttons */
-.btn-primary {
-  background: linear-gradient(135deg, #0066cc, #004499);
-  border: 2px solid #00aaff;
-  border-radius: 30px;
-  color: #fff;
-  font-size: 1.1rem;
-  font-family: 'Courier New', monospace;
-  padding: 14px 40px;
-  cursor: pointer;
-  letter-spacing: 2px;
-  transition: all .25s;
-  text-shadow: 0 0 8px #88ccff;
-  box-shadow: 0 0 20px rgba(0,150,255,0.3);
-}
-.btn-primary:hover {
-  background: linear-gradient(135deg, #0088ff, #0055cc);
-  box-shadow: 0 0 35px rgba(0,180,255,0.5);
-  transform: translateY(-2px) scale(1.03);
+/* ══════════════════════════════════════════════════════
+   ACT 3: ROCKY CONTACT
+══════════════════════════════════════════════════════ */
+.rocky-content{
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;align-items:center;gap:22px;
+  padding:30px;max-width:700px;width:100%;
 }
 
-/* ===================== GAME CANVAS ===================== */
-#game-screen { background: #000; }
-#gameCanvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+.two-ships{display:flex;align-items:center;gap:20px;font-size:3rem;text-align:center}
+.two-ships.small{font-size:2.2rem}
+.ship-label{font-size:0.7rem;letter-spacing:2px;color:#88aacc;display:block;margin-top:6px}
+
+/* Signal waves between ships */
+.signal-waves{display:flex;gap:6px;align-items:center}
+.wave{
+  width:4px;border-radius:4px;background:rgba(0,200,255,0.8);
+  animation:wavePulse 1.2s ease-in-out infinite;
+}
+.w1{height:12px;animation-delay:0s}
+.w2{height:22px;animation-delay:.2s}
+.w3{height:14px;animation-delay:.4s}
+@keyframes wavePulse{0%,100%{opacity:0.3;transform:scaleY(0.8)}50%{opacity:1;transform:scaleY(1)}}
+
+/* Heart float (win screen) */
+.heart-float{font-size:2rem;animation:heartBob 2s ease-in-out infinite}
+@keyframes heartBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+/* ══════════════════════════════════════════════════════
+   WIN / LOSE
+══════════════════════════════════════════════════════ */
+.result-content{
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;align-items:center;gap:20px;
+  text-align:center;padding:30px;
+}
+.result-text{
+  font-size:1rem;line-height:1.9;color:#cce8ff;
+  background:rgba(0,20,60,0.75);padding:20px 30px;
+  border-radius:12px;border:1px solid rgba(0,180,255,0.2);
+  max-width:540px;
 }
 
-/* ===================== HUD ===================== */
-#hud {
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  padding: 10px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  background: linear-gradient(to bottom, rgba(0,5,20,0.85) 0%, transparent 100%);
-  pointer-events: none;
-  z-index: 10;
-}
-
-.hud-left, .hud-right {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  min-width: 220px;
-}
-.hud-right { align-items: flex-end; }
-
-.hud-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.hud-item.right { flex-direction: row-reverse; }
-
-.hud-label {
-  font-size: 0.75rem;
-  color: #88aacc;
-  letter-spacing: 1px;
-  white-space: nowrap;
-}
-.hud-val {
-  font-size: 0.9rem;
-  color: #00ffcc;
-  font-weight: bold;
-}
-
-.bar-bg {
-  width: 120px;
-  height: 10px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 5px;
-  overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.15);
-}
-.bar {
-  height: 100%;
-  border-radius: 5px;
-  transition: width .3s, background .5s;
-}
-.bar.health { background: linear-gradient(90deg,#22cc55,#88ff44); width: 100%; }
-.bar.dist   { background: linear-gradient(90deg,#0088ff,#00ccff); width: 0%; }
-.bar.sun    { background: linear-gradient(90deg,#ffcc00,#ff6600); width: 100%; }
-
-.hud-center {
-  text-align: center;
-  font-size: 0.85rem;
-  letter-spacing: 2px;
-  color: #aaddff;
-  padding-top: 4px;
-}
-
-/* ===================== WIN / LOSE ===================== */
-.result-content {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  text-align: center;
-  padding: 30px;
-}
-.result-text {
-  font-size: 1.1rem;
-  line-height: 1.9;
-  color: #cce8ff;
-  background: rgba(0,20,60,0.7);
-  padding: 20px 30px;
-  border-radius: 12px;
-  border: 1px solid rgba(0,180,255,0.25);
-}
-
-/* Planet arrive animation */
-.planet-arrive {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #66ff99, #228844 60%, #114422);
-  box-shadow: 0 0 40px 10px rgba(0,255,100,0.4);
-  animation: planetBob 3s ease-in-out infinite;
-  margin-bottom: 10px;
-}
-@keyframes planetBob {
-  0%,100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-10px) scale(1.05); }
-}
-
-/* ===================== CONTROLS TIP ===================== */
-#controls-tip {
-  position: absolute;
-  bottom: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: rgba(150,200,255,0.6);
-  font-size: 0.75rem;
-  letter-spacing: 2px;
-  pointer-events: none;
-  z-index: 10;
-}
-
-/* ===================== MOBILE ===================== */
-@media (max-width: 600px) {
-  .bar-bg { width: 80px; }
-  .hud-left, .hud-right { min-width: 160px; }
-  #hud { padding: 8px 10px; }
+/* Mobile */
+@media(max-width:600px){
+  .bar-bg{width:80px}
+  .hud-left,.hud-right{min-width:150px}
+  #hud{padding:8px 8px}
+  .two-ships{font-size:2rem}
 }

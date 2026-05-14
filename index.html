@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Hail Mary — King Rocky</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ======= INTRO SCREEN ======= -->
+  <div id="intro-screen" class="screen active">
+    <div class="stars-bg"></div>
+    <div class="intro-content">
+      <div class="sun-warning">
+        <div class="sun-glow"></div>
+        <div class="sun-core"></div>
+        <div class="astrophage-swarm"></div>
+      </div>
+      <h1 class="title-glow">PROJECT HAIL MARY</h1>
+      <h2 class="subtitle">King Rocky Mission</h2>
+      <div class="story-box" id="story-box">
+        <p id="story-text"></p>
+      </div>
+      <button id="start-btn" class="btn-primary" style="display:none">🚀 เริ่มภารกิจ</button>
+    </div>
+  </div>
+
+  <!-- ======= GAME SCREEN ======= -->
+  <div id="game-screen" class="screen">
+    <canvas id="gameCanvas"></canvas>
+    <div id="hud">
+      <div class="hud-left">
+        <div class="hud-item">
+          <span class="hud-label">❤️ พลังชีวิต</span>
+          <div class="bar-bg"><div id="health-bar" class="bar health"></div></div>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">🌟 ระยะทาง</span>
+          <div class="bar-bg"><div id="dist-bar" class="bar dist"></div></div>
+        </div>
+      </div>
+      <div class="hud-center">
+        <span id="hud-title">🛸 มุ่งสู่ Tau Ceti</span>
+      </div>
+      <div class="hud-right">
+        <div class="hud-item right">
+          <span class="hud-label">☀️ ดวงอาทิตย์</span>
+          <div class="bar-bg"><div id="sun-bar" class="bar sun"></div></div>
+        </div>
+        <div class="hud-item right">
+          <span class="hud-label">⚡ ความเร็ว</span>
+          <span id="speed-val" class="hud-val">1.0x</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======= WIN SCREEN ======= -->
+  <div id="win-screen" class="screen">
+    <div class="stars-bg"></div>
+    <div class="result-content">
+      <div class="planet-arrive"></div>
+      <h1 class="title-glow green">🎉 ภารกิจสำเร็จ!</h1>
+      <p class="result-text">คุณถึงระบบดาว <strong>Tau Ceti</strong> แล้ว<br/>พบสิ่งมีชีวิตที่ชื่อว่า <em>"Rocky"</em><br/>และค้นพบวิธีหยุดยั้ง Astrophage!</p>
+      <button class="btn-primary" onclick="restartGame()">🔄 เล่นอีกครั้ง</button>
+    </div>
+  </div>
+
+  <!-- ======= LOSE SCREEN ======= -->
+  <div id="lose-screen" class="screen">
+    <div class="stars-bg"></div>
+    <div class="result-content">
+      <h1 class="title-glow red">💥 ยานถูกทำลาย</h1>
+      <p class="result-text">โลกยังต้องการคุณอยู่<br/>ลองใหม่อีกครั้ง นักบินอวกาศ!</p>
+      <button class="btn-primary" onclick="restartGame()">🔄 ลองอีกครั้ง</button>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

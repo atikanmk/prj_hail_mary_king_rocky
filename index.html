@@ -1,132 +1,53 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Project Hail Mary — King Rocky</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
 
-  <!-- ACT 0: WAKE UP -->
-  <div id="wakeup-screen" class="screen active">
+  <!-- TITLE SCREEN -->
+  <div id="title-screen" class="screen active">
     <div class="stars-bg"></div>
-    <div class="scanlines"></div>
-    <div id="wakeup-content" class="wakeup-content">
-      <div id="pod-anim" class="pod-anim">
-        <div class="pod-lid"></div>
-        <div class="pod-inner">
-          <div class="pod-human">🧑‍🚀</div>
-        </div>
-      </div>
-      <div class="terminal-box" id="terminal-box">
-        <div class="terminal-header">
-          <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
-          <span class="terminal-title">HAIL MARY — SHIP LOG</span>
-        </div>
-        <div class="terminal-body">
-          <p id="terminal-text" class="terminal-text"></p>
-          <span class="cursor-blink">█</span>
-        </div>
-      </div>
-      <button id="wakeup-next-btn" class="btn-primary" style="display:none">▶ ต่อไป</button>
-    </div>
-  </div>
-
-  <!-- ACT 1: MISSION BRIEFING -->
-  <div id="intro-screen" class="screen">
-    <div class="stars-bg"></div>
-    <div class="intro-content">
-      <div class="sun-warning">
+    <div class="title-content">
+      <div class="astrophage-orb">
         <div class="sun-glow"></div>
         <div class="sun-core"></div>
-        <div class="astrophage-swarm"></div>
+        <div class="astrophage-ring"></div>
       </div>
       <h1 class="title-glow">PROJECT HAIL MARY</h1>
       <h2 class="subtitle">King Rocky Mission</h2>
-      <div class="story-box" id="story-box">
-        <p id="story-text"></p>
-      </div>
-      <button id="start-btn" class="btn-primary" style="display:none">🚀 เริ่มภารกิจ — ขับยานสู่ Tau Ceti</button>
+      <p class="title-desc">
+        สิ่งมีชีวิตในอวกาศกำลังกินดวงอาทิตย์ทีละนิด…<br/>
+        Dr. Kungking ต้องออกเดินทางคนเดียว เพื่อชะตาของโลก
+      </p>
+      <button id="start-btn" class="btn-primary">🚀 เริ่มภารกิจ</button>
     </div>
   </div>
 
-  <!-- ACT 2: GAMEPLAY -->
+  <!-- GAME CANVAS (used for all gameplay phases) -->
   <div id="game-screen" class="screen">
     <canvas id="gameCanvas"></canvas>
-    <div id="hud">
-      <div class="hud-left">
-        <div class="hud-item">
-          <span class="hud-label">❤️ พลังชีวิต</span>
-          <div class="bar-bg"><div id="health-bar" class="bar health"></div></div>
-        </div>
-        <div class="hud-item">
-          <span class="hud-label">🌟 ระยะทาง → Tau Ceti</span>
-          <div class="bar-bg"><div id="dist-bar" class="bar dist"></div></div>
-        </div>
-      </div>
-      <div class="hud-center">
-        <span id="hud-title">🛸 King Rocky — ปีที่ 3 แห่งการเดินทาง</span>
-      </div>
-      <div class="hud-right">
-        <div class="hud-item right">
-          <span class="hud-label">☀️ ดวงอาทิตย์</span>
-          <div class="bar-bg"><div id="sun-bar" class="bar sun"></div></div>
-        </div>
-        <div class="hud-item right">
-          <span class="hud-label">⚡ Warp</span>
-          <span id="speed-val" class="hud-val">1.0x</span>
-        </div>
-      </div>
-    </div>
-    <div id="story-popup" class="story-popup hidden"><p id="story-popup-text"></p></div>
-    <div id="controls-tip">↑↓←→ / WASD — ควบคุมยาน | หลบอุกกาบาตให้ถึง Tau Ceti!</div>
-  </div>
-
-  <!-- ACT 3: MEET ROCKY -->
-  <div id="rocky-screen" class="screen">
-    <div class="stars-bg"></div>
-    <div class="rocky-content">
-      <div class="two-ships">
-        <div class="ship-left">🛸<br/><span class="ship-label">King Rocky<br/>(คุณ)</span></div>
-        <div class="signal-waves">
-          <div class="wave w1"></div>
-          <div class="wave w2"></div>
-          <div class="wave w3"></div>
-        </div>
-        <div class="ship-right">🪨<br/><span class="ship-label">Rocky<br/>(Eridian)</span></div>
-      </div>
-      <h1 class="title-glow green">👽 พบการติดต่อจากยานแปลกปลอม!</h1>
-      <div class="terminal-box wide">
-        <div class="terminal-header">
-          <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
-          <span class="terminal-title">FIRST CONTACT LOG</span>
-        </div>
-        <div class="terminal-body">
-          <p id="rocky-text" class="terminal-text"></p>
-          <span class="cursor-blink">█</span>
-        </div>
-      </div>
-      <button id="rocky-next-btn" class="btn-primary" style="display:none">🤝 ร่วมมือกับ Rocky</button>
-    </div>
   </div>
 
   <!-- WIN -->
   <div id="win-screen" class="screen">
     <div class="stars-bg"></div>
     <div class="result-content">
-      <div class="two-ships small">
-        <div class="ship-left">🛸</div>
-        <div class="heart-float">💙</div>
-        <div class="ship-right">🪨</div>
+      <div class="two-ships">
+        <span class="big-emoji">🧑‍🚀</span>
+        <span class="heart-float">💙</span>
+        <span class="big-emoji">🪨</span>
       </div>
       <h1 class="title-glow green">🎉 ภารกิจสำเร็จ!</h1>
       <p class="result-text">
-        คุณและ Rocky ค้นพบว่า <strong>Astrophage</strong> กลัวความถี่แสงบางอย่าง<br/>
-        ที่มีเฉพาะใน Tau Ceti เท่านั้น<br/><br/>
-        Rocky นำข้อมูลกลับไปยัง Erid<br/>
-        คุณส่งสัญญาณกลับมายังโลก…<br/><br/>
-        <em>&quot;Hail Mary full of grace — humanity has a chance.&quot;</em>
+        <strong>Dr. Kungking</strong> และ <strong>Rocky</strong> ร่วมกันกำจัดมนุษย์ต่างดาว<br/>
+        และค้นพบวิธีหยุดยั้ง Astrophage ที่กำลังกินดวงอาทิตย์<br/><br/>
+        Rocky ส่งข้อมูลกลับไปยัง Erid<br/>
+        Dr. Kungking ส่งสัญญาณกลับมายังโลก…<br/><br/>
+        <em>"Hail Mary full of grace — humanity has a chance."</em>
       </p>
       <button class="btn-primary" onclick="restartGame()">🔄 เล่นอีกครั้ง</button>
     </div>
@@ -136,9 +57,9 @@
   <div id="lose-screen" class="screen">
     <div class="stars-bg"></div>
     <div class="result-content">
-      <h1 class="title-glow red">💥 ยาน King Rocky ถูกทำลาย</h1>
+      <h1 class="title-glow red">💥 ภารกิจล้มเหลว</h1>
       <p class="result-text">
-        โลกยังรอคุณอยู่<br/>
+        โลกยังต้องการ Dr. Kungking อยู่<br/>
         ลูกเรือที่จากไปก็เชื่อในตัวคุณ…<br/>
         ลองอีกครั้ง นักบินอวกาศ
       </p>

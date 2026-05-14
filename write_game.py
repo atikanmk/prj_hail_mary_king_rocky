@@ -1,3 +1,168 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+import os
+BASE = '/Users/atk/Desktop/Prj_Hail_Mary_King_Rocky'
+
+# ─────────────────────────────────────────────────────────────────────
+#  index.html
+# ─────────────────────────────────────────────────────────────────────
+HTML = """\
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Project Hail Mary — King Rocky</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!-- TITLE SCREEN -->
+  <div id="title-screen" class="screen active">
+    <div class="stars-bg"></div>
+    <div class="title-content">
+      <div class="astrophage-orb">
+        <div class="sun-glow"></div>
+        <div class="sun-core"></div>
+        <div class="astrophage-ring"></div>
+      </div>
+      <h1 class="title-glow">PROJECT HAIL MARY</h1>
+      <h2 class="subtitle">King Rocky Mission</h2>
+      <p class="title-desc">
+        สิ่งมีชีวิตในอวกาศกำลังกินดวงอาทิตย์ทีละนิด…<br/>
+        Dr. Kungking ต้องออกเดินทางคนเดียว เพื่อชะตาของโลก
+      </p>
+      <button id="start-btn" class="btn-primary">🚀 เริ่มภารกิจ</button>
+    </div>
+  </div>
+
+  <!-- GAME CANVAS (used for all gameplay phases) -->
+  <div id="game-screen" class="screen">
+    <canvas id="gameCanvas"></canvas>
+  </div>
+
+  <!-- WIN -->
+  <div id="win-screen" class="screen">
+    <div class="stars-bg"></div>
+    <div class="result-content">
+      <div class="two-ships">
+        <span class="big-emoji">🧑‍🚀</span>
+        <span class="heart-float">💙</span>
+        <span class="big-emoji">🪨</span>
+      </div>
+      <h1 class="title-glow green">🎉 ภารกิจสำเร็จ!</h1>
+      <p class="result-text">
+        <strong>Dr. Kungking</strong> และ <strong>Rocky</strong> ร่วมกันกำจัดมนุษย์ต่างดาว<br/>
+        และค้นพบวิธีหยุดยั้ง Astrophage ที่กำลังกินดวงอาทิตย์<br/><br/>
+        Rocky ส่งข้อมูลกลับไปยัง Erid<br/>
+        Dr. Kungking ส่งสัญญาณกลับมายังโลก…<br/><br/>
+        <em>"Hail Mary full of grace — humanity has a chance."</em>
+      </p>
+      <button class="btn-primary" onclick="restartGame()">🔄 เล่นอีกครั้ง</button>
+    </div>
+  </div>
+
+  <!-- LOSE -->
+  <div id="lose-screen" class="screen">
+    <div class="stars-bg"></div>
+    <div class="result-content">
+      <h1 class="title-glow red">💥 ภารกิจล้มเหลว</h1>
+      <p class="result-text">
+        โลกยังต้องการ Dr. Kungking อยู่<br/>
+        ลูกเรือที่จากไปก็เชื่อในตัวคุณ…<br/>
+        ลองอีกครั้ง นักบินอวกาศ
+      </p>
+      <button class="btn-primary" onclick="restartGame()">🔄 ลองอีกครั้ง</button>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
+"""
+
+# ─────────────────────────────────────────────────────────────────────
+#  style.css
+# ─────────────────────────────────────────────────────────────────────
+CSS = """\
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#000;font-family:'Courier New',monospace;color:#fff;overflow:hidden;height:100vh;width:100vw}
+
+/* SCREENS */
+.screen{position:fixed;inset:0;display:none;justify-content:center;align-items:center;flex-direction:column}
+.screen.active{display:flex}
+
+/* STARFIELD */
+.stars-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(1px 1px at  8% 12%,#fff 0%,transparent 100%),
+    radial-gradient(1px 1px at 25% 44%,#aaf 0%,transparent 100%),
+    radial-gradient(1px 1px at 52% 18%,#fff 0%,transparent 100%),
+    radial-gradient(1px 1px at 71% 58%,#ffa 0%,transparent 100%),
+    radial-gradient(1px 1px at 88% 33%,#fff 0%,transparent 100%),
+    radial-gradient(1px 1px at 18% 77%,#aff 0%,transparent 100%),
+    radial-gradient(1px 1px at 63% 83%,#fff 0%,transparent 100%),
+    radial-gradient(1px 1px at 40% 68%,#faa 0%,transparent 100%),
+    radial-gradient(2px 2px at 83%  8%,#fff 0%,transparent 100%),
+    radial-gradient(1px 1px at  4% 53%,#ccc 0%,transparent 100%),
+    radial-gradient(1px 1px at 95% 70%,#aaf 0%,transparent 100%),
+    radial-gradient(1px 1px at 35% 90%,#fff 0%,transparent 100%);
+  background-size:900px 700px;
+  animation:starFloat 80s linear infinite;
+}
+@keyframes starFloat{to{background-position:-900px 0}}
+
+/* TITLE */
+.title-content{
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;align-items:center;gap:16px;
+  padding:30px;max-width:680px;width:100%;text-align:center;
+}
+
+/* Sun orb */
+.astrophage-orb{position:relative;width:110px;height:110px;margin-bottom:8px}
+.sun-glow{position:absolute;inset:-20px;border-radius:50%;background:radial-gradient(circle,rgba(255,160,0,0.3) 0%,transparent 70%);animation:pulse 2s ease-in-out infinite}
+.sun-core{position:absolute;inset:18px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ffe066,#ff8c00 60%,#cc4400);box-shadow:0 0 40px 15px rgba(255,150,0,0.5);animation:pulse 2s ease-in-out infinite alternate}
+.astrophage-ring{position:absolute;inset:0;border-radius:50%;animation:spin 4s linear infinite}
+.astrophage-ring::before{content:'';position:absolute;inset:-6px;border-radius:50%;border:4px dashed rgba(120,60,200,0.7);animation:spin 3s linear infinite reverse}
+.astrophage-ring::after{content:'\\1F47E';position:absolute;font-size:20px;top:-14px;left:50%;transform:translateX(-50%);animation:orbit 4s linear infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes orbit{to{transform:translateX(-50%) rotate(360deg)}}
+
+/* Text */
+.title-glow{font-size:clamp(1.6rem,5vw,2.8rem);font-weight:900;letter-spacing:4px;text-transform:uppercase;text-shadow:0 0 10px #00cfff,0 0 30px #0088ff,0 0 60px #0044cc;animation:tpulse 3s ease-in-out infinite}
+.title-glow.green{text-shadow:0 0 20px #00ff88,0 0 50px #00cc44}
+.title-glow.red{text-shadow:0 0 20px #ff4444,0 0 50px #cc0000}
+@keyframes tpulse{0%,100%{opacity:1}50%{opacity:.85}}
+.subtitle{font-size:1rem;letter-spacing:8px;color:#88ccff;text-transform:uppercase}
+.title-desc{font-size:.92rem;color:#aabbcc;line-height:1.8;background:rgba(0,15,40,.7);padding:14px 24px;border-radius:10px;border:1px solid rgba(0,150,255,.2)}
+
+/* Button */
+.btn-primary{background:linear-gradient(135deg,#0066cc,#004499);border:2px solid #00aaff;border-radius:30px;color:#fff;font-size:1rem;font-family:'Courier New',monospace;padding:13px 36px;cursor:pointer;letter-spacing:2px;transition:all .25s;text-shadow:0 0 8px #88ccff;box-shadow:0 0 20px rgba(0,150,255,.3)}
+.btn-primary:hover{background:linear-gradient(135deg,#0088ff,#0055cc);box-shadow:0 0 35px rgba(0,180,255,.5);transform:translateY(-2px) scale(1.03)}
+
+/* Canvas */
+#game-screen{background:#000}
+#gameCanvas{position:absolute;inset:0;width:100%;height:100%}
+
+/* Win/Lose */
+.result-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center;padding:30px}
+.result-text{font-size:1rem;line-height:1.9;color:#cce8ff;background:rgba(0,20,60,.75);padding:20px 30px;border-radius:12px;border:1px solid rgba(0,180,255,.2);max-width:520px}
+.two-ships{display:flex;align-items:center;gap:16px;font-size:3rem}
+.big-emoji{font-size:3rem}
+.heart-float{font-size:2.2rem;animation:hbob 2s ease-in-out infinite}
+@keyframes hbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+/* Mobile */
+@media(max-width:600px){#hud{padding:6px 8px}}
+"""
+
+# ─────────────────────────────────────────────────────────────────────
+#  game.js  — full 4-phase game
+# ─────────────────────────────────────────────────────────────────────
+JS = """\
 // ================================================================
 //  PROJECT HAIL MARY — King Rocky  |  game.js
 //  Phases: walk -> asteroid -> dock -> planet -> win/lose
@@ -135,10 +300,10 @@ let alertState='none'; // none | flash | show
 let alertTimer=0, bridgeReached=false, bridgeTransTimer=0;
 
 const ROOMS = [
-  {key:'cryo',     label:'CRYO BAY',      icon:'\u2744\ufe0f', relX:.03, relW:.19, bg:'#000d22', accent:'#003366'},
-  {key:'lab',      label:'LABORATORY',    icon:'🔬',    relX:.24, relW:.20, bg:'#001110', accent:'#003322'},
-  {key:'quarters', label:'CREW QUARTERS', icon:'🛏\ufe0f', relX:.46, relW:.19, bg:'#100a00', accent:'#332200'},
-  {key:'bridge',   label:'BRIDGE',        icon:'🎮', relX:.67, relW:.30, bg:'#001500', accent:'#003300', isBridge:true},
+  {key:'cryo',     label:'CRYO BAY',      icon:'\\u2744\\ufe0f', relX:.03, relW:.19, bg:'#000d22', accent:'#003366'},
+  {key:'lab',      label:'LABORATORY',    icon:'\\U0001f52c',    relX:.24, relW:.20, bg:'#001110', accent:'#003322'},
+  {key:'quarters', label:'CREW QUARTERS', icon:'\\U0001f6cf\\ufe0f', relX:.46, relW:.19, bg:'#100a00', accent:'#332200'},
+  {key:'bridge',   label:'BRIDGE',        icon:'\\U0001f3ae', relX:.67, relW:.30, bg:'#001500', accent:'#003300', isBridge:true},
 ];
 const SHIP_TOP  = () => H * .18;
 const SHIP_H    = () => H * .58;
@@ -220,7 +385,7 @@ function drawWalk() {
       ctx.fillStyle='#00ff55';
       ctx.font=`bold ${Math.round(W*.022)}px Courier New`;
       ctx.textAlign='center'; ctx.textBaseline='middle';
-      ctx.fillText('\u25B6\u25B6 GO HERE \u25B6\u25B6', rx+rw/2, sTop+sH/2);
+      ctx.fillText('\\u25B6\\u25B6 GO HERE \\u25B6\\u25B6', rx+rw/2, sTop+sH/2);
       ctx.textBaseline='alphabetic';
     }
   }
@@ -234,9 +399,9 @@ function drawWalk() {
   // HUD
   ctx.fillStyle='#aaddff'; ctx.font=`${Math.round(W*.017)}px Courier New`;
   ctx.textAlign='left'; ctx.textBaseline='alphabetic';
-  ctx.fillText('🧑\u200d🚀 '+HERO, 18, 30);
+  ctx.fillText('\\U0001f9d1\\u200d\\U0001f680 '+HERO, 18, 30);
   ctx.fillStyle='#556677'; ctx.font=`${Math.round(W*.011)}px Courier New`;
-  ctx.fillText('WASD / \u2191\u2193\u2190\u2192 \u0e40\u0e14\u0e34\u0e19\u0e44\u0e14\u0e49\u0e40\u0e25\u0e22', 18, 50);
+  ctx.fillText('WASD / \\u2191\\u2193\\u2190\\u2192 \\u0e40\\u0e14\\u0e34\\u0e19\\u0e44\\u0e14\\u0e49\\u0e40\\u0e25\\u0e22', 18, 50);
 
   drawWalkAlert();
 
@@ -247,7 +412,7 @@ function drawWalk() {
     if (bridgeTransTimer>25) {
       ctx.fillStyle=`rgba(0,255,80,${a})`;
       ctx.font=`bold ${Math.round(W*.045)}px Courier New`;
-      ctx.textAlign='center'; ctx.fillText('🚀 LAUNCHING...', W/2, H/2);
+      ctx.textAlign='center'; ctx.fillText('\\U0001f680 LAUNCHING...', W/2, H/2);
     }
   }
 }
@@ -261,20 +426,20 @@ function drawRoomDecor(r,rx,sTop,rw,sH) {
       ctx.fillStyle='#002244'; ctx.strokeStyle='#004488'; ctx.lineWidth=1;
       ctx.fillRect(px-16,flY-78,32,72); ctx.strokeRect(px-16,flY-78,32,72);
       ctx.font='20px serif';
-      ctx.fillText(i===0?'🧑\u200d🚀':'💀', px, flY-42);
+      ctx.fillText(i===0?'\\U0001f9d1\\u200d\\U0001f680':'\\U0001f480', px, flY-42);
     }
   } else if (r.key==='lab') {
     ctx.fillStyle='#112233'; ctx.fillRect(rx+rw*.1,flY-38,rw*.8,12);
     ctx.font='22px serif';
-    ctx.fillText('🔬', rx+rw*.25, flY-18);
-    ctx.fillText('🧪', rx+rw*.55, flY-18);
-    ctx.fillText('💻', rx+rw*.82, flY-18);
+    ctx.fillText('\\U0001f52c', rx+rw*.25, flY-18);
+    ctx.fillText('\\U0001f9ea', rx+rw*.55, flY-18);
+    ctx.fillText('\\U0001f4bb', rx+rw*.82, flY-18);
   } else if (r.key==='quarters') {
     ctx.font='22px serif';
-    ctx.fillText('🛏\ufe0f', rx+rw*.3, flY-14);
+    ctx.fillText('\\U0001f6cf\\ufe0f', rx+rw*.3, flY-14);
     ctx.fillStyle='#221100'; ctx.fillRect(rx+rw*.58,sTop+sH*.2,36,46);
     ctx.strokeStyle='#553311'; ctx.lineWidth=1.5; ctx.strokeRect(rx+rw*.58,sTop+sH*.2,36,46);
-    ctx.font='18px serif'; ctx.fillText('📷', rx+rw*.76,sTop+sH*.43);
+    ctx.font='18px serif'; ctx.fillText('\\U0001f4f7', rx+rw*.76,sTop+sH*.43);
   } else if (r.key==='bridge') {
     // Control panel
     ctx.fillStyle='#001100'; ctx.fillRect(rx+rw*.08,flY-52,rw*.84,46);
@@ -289,7 +454,7 @@ function drawRoomDecor(r,rx,sTop,rw,sH) {
     ctx.strokeStyle='#005500'; ctx.lineWidth=1.5; ctx.strokeRect(rx+rw*.1,sTop+sH*.14,rw*.8,sH*.3);
     ctx.fillStyle='#00cc44'; ctx.font=`bold ${Math.round(W*.011)}px Courier New`;
     ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText('\u26a0\ufe0f ASTEROID INCOMING', rx+rw*.5, sTop+sH*.32);
+    ctx.fillText('\\u26a0\\ufe0f ASTEROID INCOMING', rx+rw*.5, sTop+sH*.32);
     ctx.fillStyle='#ff6600';
     ctx.fillText('BRACE FOR IMPACT', rx+rw*.5, sTop+sH*.22);
     ctx.textBaseline='alphabetic';
@@ -305,7 +470,7 @@ function drawWalker() {
   // Bob
   const bob=Math.sin(fc*.14)*2.5;
   ctx.font='36px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText('🧑\u200d🚀',0,bob);
+  ctx.fillText('\\U0001f9d1\\u200d\\U0001f680',0,bob);
   ctx.restore();
   ctx.fillStyle='#aaddff'; ctx.font=`bold ${Math.round(W*.012)}px Courier New`;
   ctx.textAlign='center'; ctx.textBaseline='alphabetic';
@@ -322,7 +487,7 @@ function drawWalkAlert() {
     ctx.fillStyle=`rgba(255,100,0,${.8+.2*Math.sin(fc*.2)})`;
     ctx.font=`bold ${Math.round(W*.034)}px Courier New`;
     ctx.textAlign='center'; ctx.textBaseline='alphabetic';
-    ctx.fillText('\u26a0\ufe0f  RED ALERT  \u26a0\ufe0f', W/2, H*.12);
+    ctx.fillText('\\u26a0\\ufe0f  RED ALERT  \\u26a0\\ufe0f', W/2, H*.12);
   }
   if (alertState==='show'||alertState==='flash') {
     const bw=Math.min(560,W*.72), bh=150, bx=W/2-bw/2, by=H*.73;
@@ -330,14 +495,14 @@ function drawWalkAlert() {
     ctx.strokeStyle='#ff4400'; ctx.lineWidth=2; ctx.stroke();
     ctx.fillStyle='#ff6644'; ctx.font=`bold ${Math.round(W*.017)}px Courier New`;
     ctx.textAlign='center'; ctx.textBaseline='alphabetic';
-    ctx.fillText('\u26a0\ufe0f ASTEROID INCOMING!', W/2, by+32);
+    ctx.fillText('\\u26a0\\ufe0f ASTEROID INCOMING!', W/2, by+32);
     ctx.fillStyle='#ffcc88'; ctx.font=`${Math.round(W*.013)}px Courier New`;
-    ctx.fillText(HERO+' \u2014 \u0e44\u0e1b\u0e17\u0e35\u0e48 BRIDGE \u0e40\u0e1e\u0e37\u0e48\u0e2d\u0e02\u0e31\u0e1a\u0e22\u0e32\u0e19\u0e2b\u0e25\u0e1a\u0e2d\u0e38\u0e01\u0e01\u0e32\u0e1a\u0e32\u0e15!', W/2, by+62);
+    ctx.fillText(HERO+' \\u2014 \\u0e44\\u0e1b\\u0e17\\u0e35\\u0e48 BRIDGE \\u0e40\\u0e1e\\u0e37\\u0e48\\u0e2d\\u0e02\\u0e31\\u0e1a\\u0e22\\u0e32\\u0e19\\u0e2b\\u0e25\\u0e1a\\u0e2d\\u0e38\\u0e01\\u0e01\\u0e32\\u0e1a\\u0e32\\u0e15!', W/2, by+62);
     if (alertState==='show') {
       ctx.fillStyle='#88ff44'; ctx.font=`${Math.round(W*.013)}px Courier New`;
-      ctx.fillText('\u25B6\u25B6 \u0e40\u0e14\u0e34\u0e19\u0e44\u0e1b\u0e17\u0e32\u0e07 BRIDGE \u0e14\u0e49\u0e32\u0e19\u0e02\u0e27\u0e32', W/2, by+92);
+      ctx.fillText('\\u25B6\\u25B6 \\u0e40\\u0e14\\u0e34\\u0e19\\u0e44\\u0e1b\\u0e17\\u0e32\\u0e07 BRIDGE \\u0e14\\u0e49\\u0e32\\u0e19\\u0e02\\u0e27\\u0e32', W/2, by+92);
       ctx.fillStyle='#556677'; ctx.font=`${Math.round(W*.01)}px Courier New`;
-      ctx.fillText('(\u0e01\u0e14 \u2192 \u0e2b\u0e23\u0e37\u0e2d D \u0e40\u0e14\u0e34\u0e19\u0e02\u0e27\u0e32)', W/2, by+116);
+      ctx.fillText('(\\u0e01\\u0e14 \\u2192 \\u0e2b\\u0e23\\u0e37\\u0e2d D \\u0e40\\u0e14\\u0e34\\u0e19\\u0e02\\u0e27\\u0e32)', W/2, by+116);
     }
   }
 }
@@ -354,7 +519,7 @@ function initAsteroid() {
   ship.x=W*.18; ship.y=H/2; ship.vx=0; ship.vy=0;
   ship.health=100; ship.invincible=0;
   asteroids=[]; particles=[]; astTimer=0; astInterval=22;
-  flashMsg='🪨 ASTEROID FIELD!'; flashTimer=100;
+  flashMsg='\\U0001faa8 ASTEROID FIELD!'; flashTimer=100;
   initStars();
 }
 
@@ -409,7 +574,7 @@ function updateAsteroid() {
 }
 
 function spawnAst(prog) {
-  const em=['🪨','\u2604\ufe0f','💫','🌑'];
+  const em=['\\U0001faa8','\\u2604\\ufe0f','\\U0001f4ab','\\U0001f311'];
   const size=14+Math.random()*32, spd=3+Math.random()*4+prog*5;
   const side=Math.random();
   let x,y,vx,vy;
@@ -430,20 +595,20 @@ function drawAsteroid() {
   // HUD
   drawBar(16,16,200,18,ship.health/100,ship.health>50?'#22cc55':ship.health>25?'#ffaa00':'#ff2200');
   ctx.fillStyle='#fff'; ctx.font='bold 12px Courier New'; ctx.textAlign='left'; ctx.textBaseline='alphabetic';
-  ctx.fillText('\u2764\ufe0f '+Math.max(0,Math.round(ship.health))+'%',22,50);
+  ctx.fillText('\\u2764\\ufe0f '+Math.max(0,Math.round(ship.health))+'%',22,50);
   const prog=fc/ASTEROID_FRAMES;
   drawBar(16,58,200,10,prog,'#0088ff');
-  ctx.fillStyle='#aaddff'; ctx.font='11px Courier New'; ctx.fillText('\u0e1d\u0e48\u0e32\u0e2a\u0e19\u0e32\u0e21\u0e2d\u0e38\u0e01\u0e01\u0e32\u0e1a\u0e32\u0e15',22,82);
+  ctx.fillStyle='#aaddff'; ctx.font='11px Courier New'; ctx.fillText('\\u0e1d\\u0e48\\u0e32\\u0e2a\\u0e19\\u0e32\\u0e21\\u0e2d\\u0e38\\u0e01\\u0e01\\u0e32\\u0e1a\\u0e32\\u0e15',22,82);
   ctx.fillStyle='#aaddff'; ctx.font=`bold ${Math.round(W*.015)}px Courier New`;
   ctx.textAlign='center';
-  ctx.fillText('🛸 King Rocky \u2014 \u0e1d\u0e48\u0e32\u0e2a\u0e19\u0e32\u0e21\u0e2d\u0e38\u0e01\u0e01\u0e32\u0e1a\u0e32\u0e15!', W/2, 28);
+  ctx.fillText('\\U0001f6f8 King Rocky \\u2014 \\u0e1d\\u0e48\\u0e32\\u0e2a\\u0e19\\u0e32\\u0e21\\u0e2d\\u0e38\\u0e01\\u0e01\\u0e32\\u0e1a\\u0e32\\u0e15!', W/2, 28);
   ctx.fillStyle='#556688'; ctx.font=`${Math.round(W*.011)}px Courier New`;
-  ctx.fillText('\u2191\u2193\u2190\u2192 \u0e2b\u0e25\u0e1a!', W/2, 46);
+  ctx.fillText('\\u2191\\u2193\\u2190\\u2192 \\u0e2b\\u0e25\\u0e1a!', W/2, 46);
   if(prog>.8){
     const rem=Math.ceil((ASTEROID_FRAMES-fc)/60);
     ctx.fillStyle='#ffcc00'; ctx.font=`bold ${Math.round(W*.032)}px Courier New`;
     ctx.textAlign='center';
-    ctx.fillText('\u26a1 \u0e2d\u0e2d\u0e01\u0e08\u0e32\u0e01\u0e2a\u0e19\u0e32\u0e21... '+rem+'s', W/2, H*.12);
+    ctx.fillText('\\u26a1 \\u0e2d\\u0e2d\\u0e01\\u0e08\\u0e32\\u0e01\\u0e2a\\u0e19\\u0e32\\u0e21... '+rem+'s', W/2, H*.12);
   }
   if(flashTimer>0){
     const a=flashTimer/100;
@@ -464,7 +629,7 @@ function initDock() {
   rockyY=H/2; dockTimer=0; docked=false; dockFlashTimer=0;
   ship.x=W*.12; ship.y=H/2; ship.vx=0; ship.vy=0; ship.health=100; ship.invincible=0;
   asteroids=[]; particles=[];
-  flashMsg='👽 \u0e1e\u0e1a\u0e22\u0e32\u0e19\u0e41\u0e1b\u0e25\u0e01\u0e1b\u0e25\u0e2d\u0e21!'; flashTimer=90;
+  flashMsg='\\U0001f47d \\u0e1e\\u0e1a\\u0e22\\u0e32\\u0e19\\u0e41\\u0e1b\\u0e25\\u0e01\\u0e1b\\u0e25\\u0e2d\\u0e21!'; flashTimer=90;
   initStars();
 }
 
@@ -523,17 +688,17 @@ function drawDock() {
     const ang=Math.atan2(rockyY-ship.y,rockyX-ship.x);
     ctx.save(); ctx.translate(ship.x+Math.cos(ang)*80,ship.y+Math.sin(ang)*80); ctx.rotate(ang);
     ctx.fillStyle='#ffcc00'; ctx.font='22px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText('\u25B6',0,0); ctx.restore();
+    ctx.fillText('\\u25B6',0,0); ctx.restore();
   }
   // HUD
   ctx.fillStyle='#aaddff'; ctx.font=`bold ${Math.round(W*.019)}px Courier New`;
   ctx.textAlign='center'; ctx.textBaseline='alphabetic';
-  ctx.fillText('👽 \u0e1e\u0e1a\u0e22\u0e32\u0e19\u0e41\u0e1b\u0e25\u0e01 \u2014 \u0e40\u0e02\u0e49\u0e32\u0e40\u0e17\u0e35\u0e22บ\u0e22\u0e32\u0e19\u0e43\u0e2b\u0e49\u0e44\u0e14\u0e49 5 \u0e27\u0e34\u0e19\u0e32\u0e17\u0e35!', W/2, 30);
+  ctx.fillText('\\U0001f47d \\u0e1e\\u0e1a\\u0e22\\u0e32\\u0e19\\u0e41\\u0e1b\\u0e25\\u0e01 \\u2014 \\u0e40\\u0e02\\u0e49\\u0e32\\u0e40\\u0e17\\u0e35\\u0e22\u0e1a\\u0e22\\u0e32\\u0e19\\u0e43\\u0e2b\\u0e49\\u0e44\\u0e14\\u0e49 5 \\u0e27\\u0e34\\u0e19\\u0e32\\u0e17\\u0e35!', W/2, 30);
   const prog=dockTimer/DOCK_NEED;
   const bw=Math.min(420,W*.48);
   drawBar(W/2-bw/2, 40, bw, 16, prog, `hsl(${120*prog},100%,50%)`);
   ctx.fillStyle='#fff'; ctx.font='bold 11px Courier New'; ctx.textAlign='center';
-  ctx.fillText('🔗 DOCKING '+Math.round(prog*100)+'%  ('+Math.round(dockTimer/60*10)/10+'s / 5s)', W/2, 72);
+  ctx.fillText('\\U0001f517 DOCKING '+Math.round(prog*100)+'%  ('+Math.round(dockTimer/60*10)/10+'s / 5s)', W/2, 72);
   // Flash
   if(flashTimer>0){
     const a=flashTimer/90;
@@ -548,9 +713,9 @@ function drawDock() {
     ctx.fillStyle=`rgba(0,180,90,${a*.75})`; ctx.fillRect(0,0,W,H);
     ctx.fillStyle='#00ff88'; ctx.font=`bold ${Math.round(W*.045)}px Courier New`;
     ctx.textAlign='center';
-    ctx.fillText('🔗 \u0e40\u0e0a\u0e37่\u0e2d\u0e21\u0e22\u0e32\u0e19\u0e2a\u0e33\u0e40\u0e23\u0e47\u0e08!', W/2, H/2-20);
+    ctx.fillText('\\U0001f517 \\u0e40\\u0e0a\\u0e37\u0e48\\u0e2d\\u0e21\\u0e22\\u0e32\\u0e19\\u0e2a\\u0e33\\u0e40\\u0e23\\u0e47\\u0e08!', W/2, H/2-20);
     ctx.fillStyle='#aaffcc'; ctx.font=`${Math.round(W*.022)}px Courier New`;
-    ctx.fillText('\u0e21\u0e38\u0e48\u0e07\u0e2b\u0e19\u0e49\u0e32\u0e2a\u0e39\u0e48\u0e14\u0e32\u0e27\u0e40\u0e04\u0e23\u0e32\u0e30\u0e2b\u0e4c Erid...', W/2, H/2+30);
+    ctx.fillText('\\u0e21\\u0e38\\u0e48\\u0e07\\u0e2b\\u0e19\\u0e49\\u0e32\\u0e2a\\u0e39\\u0e48\\u0e14\\u0e32\\u0e27\\u0e40\\u0e04\\u0e23\\u0e32\\u0e30\\u0e2b\\u0e4c Erid...', W/2, H/2+30);
   }
 }
 
@@ -571,7 +736,7 @@ function drawRockyShip(x,y) {
   dg.addColorStop(0,'rgba(150,255,180,.8)'); dg.addColorStop(1,'rgba(0,80,30,.5)');
   ctx.fillStyle=dg; ctx.fill(); ctx.strokeStyle='#66ffaa'; ctx.lineWidth=1.5; ctx.stroke();
   ctx.font='20px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText('🪨',0,-14);
+  ctx.fillText('\\U0001faa8',0,-14);
   // Rim lights
   for(let i=0;i<9;i++){
     const a=(i/9)*Math.PI*2+fc*.05;
@@ -597,7 +762,7 @@ function initPlanet() {
   rc.x=W*.24; rc.y=H*.68; rc.bullets=[];
   aliens=[]; alienTimer=0; alienInterval=90; aliensKilled=0; alienWave=0;
   pParticles=[]; particles=[];
-  flashMsg='🌍 \u0e25\u0e07\u0e08\u0e2d\u0e14\u0e17\u0e35\u0e48 ERID!'; flashTimer=90;
+  flashMsg='\\U0001f30d \\u0e25\\u0e07\\u0e08\\u0e2d\\u0e14\\u0e17\\u0e35\\u0e48 ERID!'; flashTimer=90;
 }
 
 function updatePlanet() {
@@ -634,7 +799,7 @@ function updatePlanet() {
         vx:-(1.5+Math.random()*1.5+alienWave*.3),
         hp:1+Math.floor(alienWave/4),
         maxHp:1+Math.floor(alienWave/4),
-        emoji:['👾','🤖','👽'][Math.floor(Math.random()*3)],
+        emoji:['\\U0001f47e','\\U0001f916','\\U0001f47d'][Math.floor(Math.random()*3)],
         shootT:Math.floor(Math.random()*80), bullets:[],
       });
     }
@@ -734,25 +899,25 @@ function drawPlanet() {
     }
   }
   // Rocky
-  ctx.font=`${Math.round(W*.036)}px serif`; ctx.fillText('🪨',rc.x,rc.y);
+  ctx.font=`${Math.round(W*.036)}px serif`; ctx.fillText('\\U0001faa8',rc.x,rc.y);
   ctx.fillStyle='#88ffcc'; ctx.font='bold 11px Courier New'; ctx.textAlign='center';
   ctx.textBaseline='alphabetic'; ctx.fillText('Rocky',rc.x,rc.y+26);
   // Player
   ctx.save(); ctx.translate(pp.x,pp.y); if(pp.facing<0) ctx.scale(-1,1);
   const wb=Math.abs(Math.sin(fc*.14))*3;
   ctx.font=`${Math.round(W*.038)}px serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText('🧑\u200d🚀',0,-wb); ctx.restore();
+  ctx.fillText('\\U0001f9d1\\u200d\\U0001f680',0,-wb); ctx.restore();
   ctx.fillStyle='#aaddff'; ctx.font='bold 11px Courier New';
   ctx.textAlign='center'; ctx.textBaseline='alphabetic'; ctx.fillText(HERO,pp.x,pp.y-30);
   // HUD
   drawBar(16,16,180,16,pp.health/100,pp.health>50?'#22cc55':pp.health>25?'#ffaa00':'#ff2200');
   ctx.fillStyle='#fff'; ctx.font='bold 12px Courier New'; ctx.textAlign='left';
-  ctx.fillText('\u2764\ufe0f '+Math.max(0,pp.health)+'%',22,48);
+  ctx.fillText('\\u2764\\ufe0f '+Math.max(0,pp.health)+'%',22,48);
   ctx.fillStyle='#ffcc00'; ctx.font=`bold ${Math.round(W*.017)}px Courier New`;
   ctx.textAlign='center';
-  ctx.fillText('👾 \u0e01\u0e33\u0e08\u0e31\u0e14: '+aliensKilled+' / '+KILL_TARGET+' | SPACE/Z \u0e22\u0e34\u0e07', W/2, 26);
+  ctx.fillText('\\U0001f47e \\u0e01\\u0e33\\u0e08\\u0e31\\u0e14: '+aliensKilled+' / '+KILL_TARGET+' | SPACE/Z \\u0e22\\u0e34\\u0e07', W/2, 26);
   ctx.fillStyle='#556688'; ctx.font=`${Math.round(W*.011)}px Courier New`;
-  ctx.fillText('\u2190\u2192 \u0e40\u0e14\u0e34\u0e19 | SPACE/Z \u0e22\u0e34\u0e07', W/2, 46);
+  ctx.fillText('\\u2190\\u2192 \\u0e40\\u0e14\\u0e34\\u0e19 | SPACE/Z \\u0e22\\u0e34\\u0e07', W/2, 46);
   // Phase flash
   if(flashTimer>0){
     const a=flashTimer/90;
@@ -804,3 +969,12 @@ window.addEventListener('DOMContentLoaded', () => {
   initTouch();
   document.getElementById('start-btn').addEventListener('click', () => startPhase('walk'));
 });
+"""
+
+for fname, content in [('index.html', HTML), ('style.css', CSS), ('game.js', JS)]:
+    path = os.path.join(BASE, fname)
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write(content)
+    print(f'Written: {fname}  ({len(content):,} chars)')
+
+print('ALL DONE')

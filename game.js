@@ -985,7 +985,7 @@ function drawAsteroid() {
 //  PHASE 3 — DOCK WITH ROCKY
 // ─────────────────────────────────────────────────────────────────
 let rockyY=0, dockTimer=0, docked=false, dockFlashTimer=0;
-const DOCK_NEED=300; // 5 s
+const DOCK_NEED=120; // 2 s
 
 function initDock() {
   rockyY=H/2; dockTimer=0; docked=false; dockFlashTimer=0;
@@ -998,7 +998,7 @@ function initDock() {
 function updateDock() {
   fc++;
   scrollStars(.4);
-  rockyY = H/2 + Math.sin(fc*.025)*H*.30;
+  rockyY = H/2 + Math.sin(fc*.018)*H*.12;
   // Ship control
   let dx=0,dy=0;
   if(keys['ArrowLeft'] ||keys['a']||keys['A']) dx=-1;
@@ -1022,8 +1022,8 @@ function updateDock() {
   // Dock check
   const rockyX=W*.76;
   const dist=Math.hypot(ship.x-rockyX, ship.y-rockyY);
-  if(dist<90) dockTimer=Math.min(DOCK_NEED,dockTimer+1);
-  else dockTimer=Math.max(0,dockTimer-2);
+  if(dist<140) dockTimer=Math.min(DOCK_NEED,dockTimer+1);
+  else dockTimer=Math.max(0,dockTimer-1);
 
   if(flashTimer>0) flashTimer--;
   if(dockTimer>=DOCK_NEED&&!docked){ docked=true; dockFlashTimer=130; }

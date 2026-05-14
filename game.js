@@ -1022,7 +1022,7 @@ function updateDock() {
   // Dock check
   const rockyX=W*.76;
   const dist=Math.hypot(ship.x-rockyX, ship.y-rockyY);
-  if(dist<80) dockTimer=DOCK_NEED;
+  if(dist<160) dockTimer=DOCK_NEED;
   else dockTimer=0;
 
   if(flashTimer>0) flashTimer--;
@@ -1055,12 +1055,12 @@ function drawDock() {
   // HUD
   ctx.fillStyle='#aaddff'; ctx.font=`bold ${Math.round(W*.019)}px Courier New`;
   ctx.textAlign='center'; ctx.textBaseline='alphabetic';
-  ctx.fillText('👽 \u0e1e\u0e1a\u0e22\u0e32\u0e19\u0e41\u0e1b\u0e25\u0e01 \u2014 \u0e40\u0e02\u0e49\u0e32\u0e40\u0e17\u0e35\u0e22บ\u0e22\u0e32\u0e19\u0e43\u0e2b\u0e49\u0e44\u0e14\u0e49 5 \u0e27\u0e34\u0e19\u0e32\u0e17\u0e35!', W/2, 30);
-  const prog=dockTimer/DOCK_NEED;
-  const bw=Math.min(420,W*.48);
-  drawBar(W/2-bw/2, 40, bw, 16, prog, `hsl(${120*prog},100%,50%)`);
-  ctx.fillStyle='#fff'; ctx.font='bold 11px Courier New'; ctx.textAlign='center';
-  ctx.fillText('🔗 DOCKING '+Math.round(prog*100)+'%  ('+Math.round(dockTimer/60*10)/10+'s / 5s)', W/2, 72);
+  ctx.fillText('👽 พบยานแปลก — บินเข้าชนยาน Rocky!', W/2, 30);
+  // progress bar hidden (instant dock)
+  // const bw=Math.min(420,W*.48);
+  // drawBar(W/2-bw/2, 40, bw, 16, prog, `hsl(${120*prog},100%,50%)`);
+  ctx.fillStyle='#aaddff'; ctx.font='bold 11px Courier New'; ctx.textAlign='center';
+  ctx.fillText('� บินเข้าหา Rocky แล้วชน!', W/2, 58);
   // Flash
   if(flashTimer>0){
     const a=flashTimer/90;

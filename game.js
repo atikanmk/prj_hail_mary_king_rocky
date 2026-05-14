@@ -297,19 +297,121 @@ function drawRoomDecor(r,rx,sTop,rw,sH) {
 }
 
 function drawWalker() {
-  const x=walker.x, y=walker.y;
-  ctx.save(); ctx.translate(x,y);
-  if(walker.facing<0) ctx.scale(-1,1);
-  // Shadow
-  ctx.fillStyle='rgba(0,0,0,.3)'; ctx.beginPath(); ctx.ellipse(0,16,16,5,0,0,Math.PI*2); ctx.fill();
-  // Bob
-  const bob=Math.sin(fc*.14)*2.5;
-  ctx.font='36px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText('🧑\u200d🚀',0,bob);
+  const x = walker.x, y = walker.y;
+  const isMoving = Math.abs(ship.vx) > 0.1 || Math.abs(ship.vy) > 0.1
+    || keys['ArrowLeft']||keys['ArrowRight']||keys['ArrowUp']||keys['ArrowDown']
+    || keys['a']||keys['d']||keys['w']||keys['s']||keys['A']||keys['D']||keys['W']||keys['S']
+    || touchActive;
+
+  // Walk cycle: legs swing when moving
+  const walk = isMoving ? Math.sin(fc * 0.22) : 0;
+  const bob  = isMoving ? Math.abs(Math.sin(fc * 0.22)) * -2 : 0;
+
+  ctx.save();
+  ctx.translate(x, y);
+  if (walker.facing < 0) ctx.scale(-1, 1);
+
+  // ── Shadow ──
+  ctx.fillStyle = 'rgba(0,0,0,.35)';
+  ctx.beginPath(); ctx.ellipse(0, 22, 14, 4, 0, 0, Math.PI*2); ctx.fill();
+
+  ctx.translate(0, bob);
+
+  // ── Legs ──
+  const legSwing = walk * 10;
+  ctx.lineCap = 'round';
+  // Back leg
+  ctx.strokeStyle = '#334477'; ctx.lineWidth = 7;
+  ctx.beginPath();
+  ctx.moveTo(-2, 8);
+  ctx.lineTo(-4 - legSwing * 0.5, 18);
+  ctx.lineTo(-5 - legSwing * 0.3, 26);
+  ctx.stroke();
+  // Front leg
+  ctx.strokeStyle = '#4455aa';
+  ctx.beginPath();
+  ctx.moveTo(2, 8);
+  ctx.lineTo(4 + legSwing * 0.5, 18);
+  ctx.lineTo(5 + legSwing * 0.3, 26);
+  ctx.stroke();
+  // Boots
+  ctx.fillStyle = '#223366';
+  ctx.beginPath(); ctx.ellipse(-5 - legSwing*.3, 27, 6, 3, -0.2, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#2244aa';
+  ctx.beginPath(); ctx.ellipse( 5 + legSwing*.3, 27, 6, 3,  0.2, 0, Math.PI*2); ctx.fill();
+
+  // ── Body / Spacesuit ──
+  const bodyGrad = ctx.createLinearGradient(-12, -10, 12, 10);
+  bodyGrad.addColorStop(0, '#6699cc');
+  bodyGrad.addColorStop(0.4, '#aaccee');
+  bodyGrad.addColorStop(1, '#334466');
+  ctx.fillStyle = bodyGrad;
+  ctx.beginPath();
+  ctx.moveTo(-11, 8); ctx.lineTo(-12, -4);
+  ctx.quadraticCurveTo(-12, -12, 0, -12);
+  ctx.quadraticCurveTo(12, -12, 12, -4);
+  ctx.lineTo(11, 8); ctx.quadraticCurveTo(0, 12, -11, 8);
+  ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = '#88bbdd'; ctx.lineWidth = 1; ctx.stroke();
+
+  // Suit chest panel
+  ctx.fillStyle = '#002244';
+  ctx.fillRect(-5, -7, 10, 7);
+  ctx.fillStyle = fc % 40 < 20 ? '#00ff88' : '#004422'; // blinking light
+  ctx.beginPath(); ctx.arc(-2, -3, 2, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#ffaa00';
+  ctx.beginPath(); ctx.arc(3, -3, 1.5, 0, Math.PI*2); ctx.fill();
+
+  // ── Arms ──
+  const armSwing = walk * 8;
+  // Back arm
+  ctx.strokeStyle = '#334477'; ctx.lineWidth = 6;
+  ctx.beginPath(); ctx.moveTo(-10, -6); ctx.lineTo(-14, 4 + armSwing); ctx.stroke();
+  ctx.fillStyle = '#334477';
+  ctx.beginPath(); ctx.arc(-14, 5 + armSwing, 3.5, 0, Math.PI*2); ctx.fill();
+  // Front arm
+  ctx.strokeStyle = '#5577bb'; ctx.lineWidth = 6;
+  ctx.beginPath(); ctx.moveTo(10, -6); ctx.lineTo(14, 4 - armSwing); ctx.stroke();
+  ctx.fillStyle = '#5577bb';
+  ctx.beginPath(); ctx.arc(14, 5 - armSwing, 3.5, 0, Math.PI*2); ctx.fill();
+
+  // ── Helmet ──
+  // Outer ring
+  ctx.fillStyle = '#445566';
+  ctx.beginPath(); ctx.arc(0, -18, 13.5, 0, Math.PI*2); ctx.fill();
+  ctx.strokeStyle = '#7799aa'; ctx.lineWidth = 1.5; ctx.stroke();
+  // Visor
+  const visorGrad = ctx.createRadialGradient(-3, -21, 1, 0, -18, 12);
+  visorGrad.addColorStop(0, 'rgba(180,240,255,0.95)');
+  visorGrad.addColorStop(0.4, 'rgba(80,160,220,0.7)');
+  visorGrad.addColorStop(1, 'rgba(0,60,120,0.85)');
+  ctx.fillStyle = visorGrad;
+  ctx.beginPath(); ctx.arc(0, -18, 10, 0, Math.PI*2); ctx.fill();
+  ctx.strokeStyle = '#aaddff'; ctx.lineWidth = 1; ctx.stroke();
+  // Visor shine
+  ctx.fillStyle = 'rgba(255,255,255,0.45)';
+  ctx.beginPath(); ctx.ellipse(-3, -22, 4, 2.5, -0.4, 0, Math.PI*2); ctx.fill();
+  // Face inside visor
+  ctx.fillStyle = 'rgba(255,200,160,0.7)';
+  ctx.beginPath(); ctx.arc(0, -18, 6, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#222';
+  ctx.beginPath(); ctx.arc(-2, -19, 1, 0, Math.PI*2); ctx.fill(); // left eye
+  ctx.beginPath(); ctx.arc( 2, -19, 1, 0, Math.PI*2); ctx.fill(); // right eye
+  ctx.strokeStyle = '#333'; ctx.lineWidth = 0.8;
+  ctx.beginPath(); ctx.arc(0, -17, 2, 0.1, Math.PI-0.1); ctx.stroke(); // smile
+  // Helmet antenna
+  ctx.strokeStyle = '#aabbcc'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(6, -29); ctx.lineTo(6, -34); ctx.stroke();
+  ctx.fillStyle = '#ff4444';
+  ctx.beginPath(); ctx.arc(6, -35, 2, 0, Math.PI*2); ctx.fill();
+
   ctx.restore();
-  ctx.fillStyle='#aaddff'; ctx.font=`bold ${Math.round(W*.012)}px Courier New`;
-  ctx.textAlign='center'; ctx.textBaseline='alphabetic';
-  ctx.fillText(HERO,x,y-26);
+
+  // Name tag above
+  ctx.fillStyle = '#aaddff';
+  ctx.font = `bold ${Math.round(W * .012)}px Courier New`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+  ctx.fillText(HERO, x, y - 44);
 }
 
 function drawWalkAlert() {

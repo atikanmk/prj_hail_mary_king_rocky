@@ -985,7 +985,7 @@ function drawAsteroid() {
 //  PHASE 3 — DOCK WITH ROCKY
 // ─────────────────────────────────────────────────────────────────
 let rockyY=0, dockTimer=0, docked=false, dockFlashTimer=0;
-const DOCK_NEED=120; // 2 s
+const DOCK_NEED=1; // instant on contact
 
 function initDock() {
   rockyY=H/2; dockTimer=0; docked=false; dockFlashTimer=0;
@@ -1022,8 +1022,8 @@ function updateDock() {
   // Dock check
   const rockyX=W*.76;
   const dist=Math.hypot(ship.x-rockyX, ship.y-rockyY);
-  if(dist<140) dockTimer=Math.min(DOCK_NEED,dockTimer+1);
-  else dockTimer=Math.max(0,dockTimer-1);
+  if(dist<80) dockTimer=DOCK_NEED;
+  else dockTimer=0;
 
   if(flashTimer>0) flashTimer--;
   if(dockTimer>=DOCK_NEED&&!docked){ docked=true; dockFlashTimer=130; }
@@ -1124,7 +1124,7 @@ function initPlanet() {
   rc.x=W*.24; rc.y=H*.68; rc.bullets=[];
   aliens=[]; alienTimer=0; alienInterval=90; aliensKilled=0; alienWave=0;
   pParticles=[]; particles=[];
-  flashMsg='🌍 \u0e25\u0e07\u0e08\u0e2d\u0e14\u0e17\u0e35\u0e48 ERID!'; flashTimer=90;
+  flashMsg='🌍 ลงจอดที่ ERID กับ Rocky!'; flashTimer=90;
 }
 
 function updatePlanet() {

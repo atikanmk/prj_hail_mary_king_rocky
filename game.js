@@ -874,13 +874,13 @@ function drawWalkAlert() {
 // ─────────────────────────────────────────────────────────────────
 const ship = {x:0,y:0,vx:0,vy:0,health:100,invincible:0};
 const ASTEROID_FRAMES = 1800; // 30 s
-let asteroids=[], astTimer=0, astInterval=22;
+let asteroids=[], astTimer=0, astInterval=40;
 let flashMsg='', flashTimer=0;
 
 function initAsteroid() {
   ship.x=W*.18; ship.y=H/2; ship.vx=0; ship.vy=0;
   ship.health=100; ship.invincible=0;
-  asteroids=[]; particles=[]; astTimer=0; astInterval=22;
+  asteroids=[]; particles=[]; astTimer=0; astInterval=40;
   flashMsg='🪨 ASTEROID FIELD!'; flashTimer=100;
   initStars();
 }
@@ -912,7 +912,7 @@ function updateAsteroid() {
   // Spawn asteroids — LOTS
   astTimer++;
   const prog=fc/ASTEROID_FRAMES;
-  astInterval=Math.max(6,22-Math.floor(prog*16));
+  astInterval=Math.max(18, 40-Math.floor(prog*18));
   if(astTimer>=astInterval){ astTimer=0; spawnAst(prog); }
   // Move asteroids
   for(let i=asteroids.length-1;i>=0;i--){
@@ -925,7 +925,7 @@ function updateAsteroid() {
     for(let i=asteroids.length-1;i>=0;i--){
       const a=asteroids[i];
       if(Math.hypot(ship.x-a.x,ship.y-a.y)<22+a.r*.6){
-        ship.health-=25; ship.invincible=80;
+        ship.health-=15; ship.invincible=90;
         explodeAt(ship.x,ship.y,22); asteroids.splice(i,1);
         if(ship.health<=0){startPhase('lose');return;}
       }
@@ -937,7 +937,7 @@ function updateAsteroid() {
 
 function spawnAst(prog) {
   const em=['🪨','\u2604\ufe0f','💫','🌑'];
-  const size=14+Math.random()*32, spd=3+Math.random()*4+prog*5;
+  const size=14+Math.random()*28, spd=2+Math.random()*2.5+prog*2.5;
   const side=Math.random();
   let x,y,vx,vy;
   if(side<.55){x=W+size;y=Math.random()*H;const a=Math.PI+(Math.random()-.5)*.9;vx=Math.cos(a)*spd;vy=Math.sin(a)*spd;}
